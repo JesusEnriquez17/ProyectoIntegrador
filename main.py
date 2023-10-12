@@ -133,6 +133,12 @@ def Nivel1Español():
     running = True
     game_over = False
     paused = False
+    level_complete = False 
+
+    try:
+        meta_object = [obj for obj in tmxdata.objects if obj.properties.get("meta", False)][0]  
+    except IndexError:
+        raise Exception("Error: No se pudo encontrar un objeto con la propiedad 'meta' en el mapa TMX.")
 
     while running:
 
@@ -175,7 +181,7 @@ def Nivel1Español():
             
             pygame.time.Clock().tick(30)
             continue
-
+    
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -236,6 +242,19 @@ def Nivel1Español():
                 collected_count += 1
         
         collectibles = [c for c in collectibles if c not in collected]
+
+        meta_rect = pygame.Rect(meta_object.x, meta_object.y, meta_object.width, meta_object.height)
+        if player_rect.colliderect(meta_rect):
+            level_complete = True
+
+        if level_complete:
+            myfont = pygame.font.Font("fuentes/Minecraft.ttf", 75)
+            text = myfont.render("Has pasado el nivel", True, (255, 0, 0))
+            screen.blit(text, (screen.get_width() // 2 - text.get_width() // 2, screen.get_height() // 2 - text.get_height() // 2))
+            pygame.display.flip()
+            pygame.time.Clock().tick(30)
+            continue
+
         
         pygame.draw.rect(screen, (255, 0, 0), player_rect.move(-camera_rect.x, -camera_rect.y))
         
@@ -280,9 +299,7 @@ def Nivel1Ingles():
         surface.blit(text, text_rect)
         surface.blit(retry_button_image, retry_button_rect.topleft)  # Dibujar la imagen del botón
         
-        return retry_button_rect  # Return the rect to check for clicks
-
-
+        return retry_button_rect 
 
     # Inicializar pygame
     pygame.init()
@@ -292,6 +309,7 @@ def Nivel1Ingles():
     collectibles = [obj for obj in tmxdata.objects if obj.properties.get("collectible", False)]
 
     myfont = pygame.font.Font("fuentes/Minecraft.ttf", 75)
+
 
     pygame.mixer.init()
     pygame.mixer.music.load('sounds/Action 01.WAV')
@@ -311,6 +329,12 @@ def Nivel1Ingles():
     running = True
     game_over = False
     paused = False
+    level_complete = False 
+
+    try:
+        meta_object = [obj for obj in tmxdata.objects if obj.properties.get("meta", False)][0]  
+    except IndexError:
+        raise Exception("Error: No se pudo encontrar un objeto con la propiedad 'meta' en el mapa TMX.")
 
     while running:
 
@@ -321,7 +345,7 @@ def Nivel1Ingles():
                 if event.key == pygame.K_ESCAPE:
                     # Cambiar el estado de pausa cuando se presiona Esc
                     paused = not paused
-        
+
         # Si el juego está en pausa, muestra un mensaje y continua con el próximo ciclo
         if paused:
             myfont = pygame.font.Font("fuentes/Minecraft.ttf", 75)
@@ -353,7 +377,7 @@ def Nivel1Ingles():
             
             pygame.time.Clock().tick(30)
             continue
-
+    
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -414,6 +438,19 @@ def Nivel1Ingles():
                 collected_count += 1
         
         collectibles = [c for c in collectibles if c not in collected]
+
+        meta_rect = pygame.Rect(meta_object.x, meta_object.y, meta_object.width, meta_object.height)
+        if player_rect.colliderect(meta_rect):
+            level_complete = True
+
+        if level_complete:
+            myfont = pygame.font.Font("fuentes/Minecraft.ttf", 75)
+            text = myfont.render("YOU HAVE PASSED THE LEVEL", True, (255, 0, 0))
+            screen.blit(text, (screen.get_width() // 2 - text.get_width() // 2, screen.get_height() // 2 - text.get_height() // 2))
+            pygame.display.flip()
+            pygame.time.Clock().tick(30)
+            continue
+
         
         pygame.draw.rect(screen, (255, 0, 0), player_rect.move(-camera_rect.x, -camera_rect.y))
         
@@ -622,7 +659,7 @@ def SeleccionarNivel():
     # Funciones callback para los botones
     def Nivel1():
         print("1")
-        
+
         if current_language == "english":
             Nivel1Ingles()
         elif current_language == "spanish":
@@ -796,3 +833,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
