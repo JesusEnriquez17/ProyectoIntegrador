@@ -61,6 +61,12 @@ collected_count = 0
 running = True
 game_over = False
 paused = False
+level_complete = False 
+
+try:
+    meta_object = [obj for obj in tmxdata.objects if obj.properties.get("meta", False)][0]  
+except IndexError:
+    raise Exception("Error: No se pudo encontrar un objeto con la propiedad 'meta' en el mapa TMX.")
 
 while running:
 
@@ -103,7 +109,7 @@ while running:
         
         pygame.time.Clock().tick(30)
         continue
-
+   
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -164,6 +170,19 @@ while running:
             collected_count += 1
     
     collectibles = [c for c in collectibles if c not in collected]
+
+    meta_rect = pygame.Rect(meta_object.x, meta_object.y, meta_object.width, meta_object.height)
+    if player_rect.colliderect(meta_rect):
+        level_complete = True
+
+    if level_complete:
+        myfont = pygame.font.Font("fuentes/Minecraft.ttf", 75)
+        text = myfont.render("Has pasado el nivel", True, (255, 0, 0))
+        screen.blit(text, (screen.get_width() // 2 - text.get_width() // 2, screen.get_height() // 2 - text.get_height() // 2))
+        pygame.display.flip()
+        pygame.time.Clock().tick(30)
+        continue
+
     
     pygame.draw.rect(screen, (255, 0, 0), player_rect.move(-camera_rect.x, -camera_rect.y))
     
